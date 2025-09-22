@@ -9,7 +9,7 @@ x-var:
   - &node-image
     node:22
 
-# Reusable envars for postgres
+# Reusable environment vars for postgres
 x-postgres-vars: &postgres-vars
   POSTGRES_HOST: database
   POSTGRES_USER: *POSTGRES_USER

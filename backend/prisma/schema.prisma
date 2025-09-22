@@ -1,9 +1,11 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["metrics"]
-  binaryTargets   = ["native", "debian-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
+// directUrl is necessary for Prisma's migration service to bypass pgbouncer
+// in the OpenShift environment. On your local machine it should be set to
+// the same value as url.
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")

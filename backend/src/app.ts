@@ -5,7 +5,7 @@ import { customLogger } from './common/logger.config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { VersioningType } from '@nestjs/common';
-import { metricsMiddleware } from "src/middleware/prom";
+import { metricsMiddleware } from "./middleware/prom";
 
 /**
  *
@@ -26,10 +26,10 @@ export async function bootstrap() {
     prefix: "v",
   });
   const config = new DocumentBuilder()
-    .setTitle("Users example")
-    .setDescription("The user API description")
+    .setTitle("IPM Platform API")
+    .setDescription("The IPM Platform API description")
     .setVersion("1.0")
-    .addTag("users")
+    .addTag("ipm-platform")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
