@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "github.vscode-pull-request-github",
+    "graphql.vscode-graphql",
+    "graphql.vscode-graphql-syntax",
+    "christian-kohler.npm-intellisense",
+    "esbenp.prettier-vscode",
+    "prisma.prisma",
+    "bradlc.vscode-tailwindcss",
+    "vitest.explorer",
+    "ms-azuretools.vscode-containers"
+  ]
+}
