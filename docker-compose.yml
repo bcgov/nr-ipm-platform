@@ -27,16 +27,15 @@ services:
     ports: ["5432:5432"]
 
   migrations:
-    image: flyway/flyway:11-alpine
+    image: *node-image
     container_name: migrations
-    command: info migrate info
-    volumes: ["./migrations/sql:/flyway/sql:ro"]
+    command: sh -c "npx prisma migrate dev && npx prisma generate"
+    volumes:
+      - "./backend:/app"
+    working_dir: "/app" 
     environment:
-      FLYWAY_URL: jdbc:postgresql://database:5432/postgres
-      FLYWAY_USER: *POSTGRES_USER
-      FLYWAY_PASSWORD: *POSTGRES_PASSWORD
-      FLYWAY_BASELINE_ON_MIGRATE: true
-      FLYWAY_DEFAULT_SCHEMA: users
+      DATABASE_URL: postgres://postgres:default@database:5432/postgres
+      DATABASE_DIRECT_URL: postgres://postgres:default@database:5432/postgres
     depends_on:
       database:
         condition: service_healthy

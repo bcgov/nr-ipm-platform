@@ -4,6 +4,8 @@
   "main": "index.js",
   "scripts": {
     "prisma-generate": "prisma generate",
+    "prisma-migrate": "prisma migrate dev",
+    "prisma-deploy": "prisma migrate deploy",
     "prebuild": "rimraf dist",
     "build": "prisma generate && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -47,7 +49,7 @@
     "@swc/cli": "^0.7.0",
     "@swc/core": "^1.10.12",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.12.0",
+    "@types/node": "^22.19.0",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
@@ -78,6 +80,10 @@
   "overrides": {
     "minimist@<1.2.6": "1.2.6",
     "reflect-metadata": "^0.2.2"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "ts-node prisma/seed.ts"
   },
   "volta": {
     "node": "22.19.0",

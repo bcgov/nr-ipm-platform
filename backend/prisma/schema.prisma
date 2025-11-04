@@ -1,16 +1,17 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["metrics"]
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  binaryTargets   = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
 }
 
-model users {
-  id    Decimal @id(map: "USER_PK") @default(dbgenerated("nextval('\"USER_SEQ\"'::regclass)")) @db.Decimal
-  name  String  @db.VarChar(200)
-  email String  @db.VarChar(200)
+model applications {
+  id       String @id @default(cuid())
+  username String @unique @db.VarChar(200)
+  email    String @unique @db.VarChar(200)
 }
