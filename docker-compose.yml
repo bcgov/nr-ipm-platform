@@ -1,3 +1,18 @@
+# This compose file includes two services that are not run by default:
+# - schemaspy: for generating database schema documentation
+# - caddy: for serving the frontend with Caddy web server
+#
+# To start these services, set the COMPOSE_PROFILES environment variable:
+#   COMPOSE_PROFILES="schemaspy,caddy" podman-compose up
+#
+# !! I've noticed an issue with the podman-compose healthcheck where it tries
+# to bring up the migrations and backend services before the database is ready.
+# for now just run them each in order manually:
+#   podman-compose up -d database
+#   podman-compose up -d migrations
+#   podman-compose up -d backend
+#   podman-compose up -d frontend
+
 # Reusable vars
 x-var:
   - &POSTGRES_USER
@@ -41,6 +56,8 @@ services:
         condition: service_healthy
 
   schemaspy:
+    # This service is only started when the "schemaspy" profile is active.
+    # COMPOSE_PROFILES=schemaspy podman-compose up -d schemaspy
     image: schemaspy/schemaspy:6.2.4
     profiles: ["schemaspy"]
     container_name: schemaspy
@@ -53,6 +70,8 @@ services:
   backend:
     container_name: backend
     depends_on:
+      database:
+        condition: service_healthy
       migrations:
         condition: service_started
     entrypoint: sh -c "npm i && npm run start:dev"
@@ -84,6 +103,8 @@ services:
         condition: service_healthy
 
   caddy:
+    # This service is only started when the "caddy" profile is active.
+    # COMPOSE_PROFILES=caddy podman-compose up -d caddy
     container_name: caddy
     profiles: ["caddy"]
     build: ./frontend
