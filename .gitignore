@@ -368,3 +368,7 @@ pyrightconfig.json
 
 # IDE
 .codebuddy
+
+# Playwright reports and test results
+playwright-report
+test-results
