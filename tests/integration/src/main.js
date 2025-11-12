@@ -14,7 +14,6 @@ const { isEqual, omit } = pkg;
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
-const apiName = process.env.API_NAME;
 const BASE_URL = process.env.BASE_URL;
 
 async function performEachMethod(BASE_URL, testCase, method, id) {
@@ -75,9 +74,7 @@ async function performTesting(testSuitesDir, testSuiteFile) {
 
 const main = async () => {
   const testSuitesDir = path.join(__dirname, "test_suites");
-  const testSuiteFiles = await fs.promises.readdir(testSuitesDir);
-  const testFile = testSuiteFiles.find(file => file.includes(apiName));
-  await performTesting(testSuitesDir, testFile);
+  await performTesting(testSuitesDir, "backend.json");
 };
 
 try {
