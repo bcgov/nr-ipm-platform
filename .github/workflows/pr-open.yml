@@ -20,6 +20,13 @@ jobs:
     strategy:
       matrix:
         package: [backend, frontend, migrations]
+        include:
+          - package: backend
+            build_context: ./backend
+          - package: frontend
+            build_context: ./frontend
+          - package: migrations
+            build_context: ./
     timeout-minutes: 10
     steps:
       - uses: bcgov/action-builder-ghcr@1a3767a04ade69edf7e4857c44269d1100282581 # v4.1.0
@@ -28,6 +35,7 @@ jobs:
           tags: ${{ github.event.number }}
           tag_fallback: latest
           triggers: ('${{ matrix.package }}/')
+          build_context: ${{ matrix.build_context }}
 
   # https://github.com/bcgov/quickstart-openshift-helpers
   deploys:

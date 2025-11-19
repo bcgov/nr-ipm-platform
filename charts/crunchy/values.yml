@@ -2,7 +2,7 @@
 global:
   config:
     dbName: app #test
-crunchy: # enable it for TEST and PROD, for PR based pipelines simply use single postgres
+crunchy:
   enabled: true
   postgresVersion: 17
   postGISVersion: 3.4
@@ -30,12 +30,12 @@ crunchy: # enable it for TEST and PROD, for PR based pipelines simply use single
     replicas: 2 # 2 or 3 for high availability in TEST and PROD.
     metadata:
       annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: '9187'
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9187"
     dataVolumeClaimSpec:
       storage: 150Mi
       storageClassName: netapp-block-standard
-      walStorage: 300Mi
+      walStorage: 600Mi
 
     requests:
       cpu: 50m
@@ -112,7 +112,7 @@ crunchy: # enable it for TEST and PROD, for PR based pipelines simply use single
         cpu: 5m
         memory: 32Mi
       maxConnections: 100 # make sure less than postgres max connections
-      poolMode: 'transaction'
+      poolMode: "transaction"
 
   # Postgres Cluster resource values:
   pgmonitor:

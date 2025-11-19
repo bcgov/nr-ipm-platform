@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 import type { AxiosResponse } from '~/axios'
-import type UserDto from '@/interfaces/UserDto'
+import type ApplicationDto from '@/interfaces/ApplicationDto'
 import { useEffect, useState } from 'react'
 import { Table, Modal, Button } from 'react-bootstrap'
 import apiService from '@/service/api-service'
@@ -8,7 +8,7 @@ import apiService from '@/service/api-service'
 type ModalProps = {
   show: boolean
   onHide: () => void
-  user?: UserDto
+  user?: ApplicationDto
 }
 
 const ModalComponent: FC<ModalProps> = ({ show, onHide, user }) => {
@@ -35,25 +35,25 @@ const ModalComponent: FC<ModalProps> = ({ show, onHide, user }) => {
 
 const Dashboard: FC = () => {
   const [data, setData] = useState<any>([])
-  const [selectedUser, setSelectedUser] = useState<UserDto | undefined>(
+  const [selectedUser, setSelectedUser] = useState<ApplicationDto | undefined>(
     undefined,
   )
 
   useEffect(() => {
     apiService
       .getAxiosInstance()
-      .get('/v1/users')
+      .get('/v1/applications')
       .then((response: AxiosResponse) => {
-        const users: UserDto[] = []
-        for (const user of response.data) {
-          const userDto = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
+        const applications: ApplicationDto[] = []
+        for (const application of response.data) {
+          const applicationDto = {
+            id: application.id,
+            username: application.username,
+            email: application.email,
           }
-          users.push(userDto)
+          applications.push(applicationDto)
         }
-        setData(users)
+        setData(applications)
       })
       .catch((error) => {
         console.error(error)
@@ -69,23 +69,23 @@ const Dashboard: FC = () => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>Employee ID</th>
-            <th>Employee Name</th>
-            <th>Employee Email</th>
+            <th>Application ID</th>
+            <th>User Name</th>
+            <th>Email</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          {data.map((user: UserDto) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
+          {data.map((application: ApplicationDto) => (
+            <tr key={application.id}>
+              <td>{application.id}</td>
+              <td>{application.username}</td>
+              <td>{application.email}</td>
               <td className="text-center">
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => setSelectedUser(user)}
+                  onClick={() => setSelectedUser(application)}
                 >
                   View Details
                 </Button>

@@ -35,16 +35,11 @@ spec:
           imagePullPolicy: {{ default "Always" .Values.backend.imagePullPolicy }}
           envFrom:
             - secretRef:
-                name: {{.Release.Name}}-flyway
+                name: {{.Release.Name}}-prisma-migrate
           env:
-            - name: FLYWAY_BASELINE_ON_MIGRATE
-              value: "true"
-            - name: FLYWAY_DEFAULT_SCHEMA
-              value: "users"
-            - name: FLYWAY_CONNECT_RETRIES
-              value: "10"
-            - name: FLYWAY_GROUP
-              value: "true"
+            - name: PRISMA_SCHEMA
+              value: "./prisma/schema.prisma"
+          command: ["prisma", "migrate", "deploy", "--schema=$(PRISMA_SCHEMA)"]
           resources:
             requests:
               cpu: 50m

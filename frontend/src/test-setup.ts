@@ -3,18 +3,18 @@ import { afterAll, afterEach, beforeAll } from 'vitest'
 import { setupServer } from 'msw/node'
 import { http, HttpResponse } from 'msw'
 
-const users = [
+const applications = [
   {
-    id: 1,
-    name: 'first post title',
-    email: 'first post body',
+    id: 'cuid123',
+    username: 'username1',
+    email: 'user1@example.com',
   },
   // ...
 ]
 
 export const restHandlers = [
-  http.get('http://localhost:3000/api/v1/users', () => {
-    return new HttpResponse(JSON.stringify(users), {
+  http.get('http://localhost:3000/api/v1/applications', () => {
+    return new HttpResponse(JSON.stringify(applications), {
       status: 200,
     })
   }),

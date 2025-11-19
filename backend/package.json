@@ -1,9 +1,12 @@
 {
-  "author": "NRIDS",
+  "author": "NRIDS - Team Ada",
   "license": "Apache-2.0",
   "main": "index.js",
   "scripts": {
-    "prisma-generate": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:seed": "prisma db seed",
     "prebuild": "rimraf dist",
     "build": "prisma generate && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -31,12 +34,12 @@
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/testing": "^11.0.6",
     "@prisma/client": "^6.3.0",
-    "prisma": "^6.2.1",
     "dotenv": "^17.0.0",
     "express-prom-bundle": "^8.0.0",
     "helmet": "^8.0.0",
     "nest-winston": "^1.10.1",
     "pg": "^8.13.1",
+    "prisma": "^6.2.1",
     "prom-client": "^15.1.3",
     "reflect-metadata": "^0.2.2",
     "rimraf": "^6.0.1",
@@ -47,7 +50,7 @@
     "@swc/cli": "^0.7.0",
     "@swc/core": "^1.10.12",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.12.0",
+    "@types/node": "^22.19.0",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
@@ -63,7 +66,6 @@
     "istanbul-badges-readme": "^1.9.0",
     "lint-staged": "^16.0.0",
     "prettier": "^3.4.2",
-
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-loader": "^9.5.2",
@@ -71,7 +73,7 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2",
     "unplugin-swc": "^1.5.1",
-    "vitest": "^3.0.2"
+    "vitest": "^3.2.4"
   },
   "lint-staged": {
     "*.{js,ts}": "./node_modules/.bin/eslint --cache --fix"
@@ -79,5 +81,13 @@
   "overrides": {
     "minimist@<1.2.6": "1.2.6",
     "reflect-metadata": "^0.2.2"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "volta": {
+    "node": "22.19.0",
+    "npm": "11.6.0"
   }
 }

@@ -1,60 +1,61 @@
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
-import { UsersService } from "./users.service";
-import { PrismaService } from "src/prisma.service";
+import { ApplicationsService } from "./applications.service";
+import { PrismaService } from "../prisma.service";
 import { Prisma } from "@prisma/client";
+import { application } from "express";
 
-describe("UserService", () => {
-  let service: UsersService;
+describe("ApplicationsService", () => {
+  let service: ApplicationsService;
   let prisma: PrismaService;
 
-  const savedUser1 = {
-    id: new Prisma.Decimal(1),
-    name: "Test Numone",
+  const savedApplication1 = {
+    id: "savedApplication1Cuid",
+    username: "testNumberOne",
     email: "numone@test.com",
   };
-  const savedUser2 = {
-    id: new Prisma.Decimal(2),
-    name: "Test Numtwo",
+  const savedApplication2 = {
+    id: "savedApplication2Cuid",
+    username: "testNumberTwo",
     email: "numtwo@test.com",
   };
-  const oneUser = {
-    id: 1,
-    name: "Test Numone",
+  const oneApplication = {
+    id: "oneApplicationCuid",
+    username: "testNumberOne",
     email: "numone@test.com",
   };
-  const updateUser = {
-    id: 1,
-    name: "Test Numone update",
+  const updateApplication = {
+    id: "updateApplicationCuid",
+    username: "testNumberOneUpdate",
     email: "numoneupdate@test.com",
   };
-  const updatedUser = {
-    id: new Prisma.Decimal(1),
-    name: "Test Numone update",
+  const updatedApplication = {
+    id: "updateApplicationCuid",
+    username: "testNumberOneUpdate",
     email: "numoneupdate@test.com",
   };
 
-  const twoUser = {
-    id: 2,
-    name: "Test Numtwo",
+  const twoApplication = {
+    id: "twoApplicationCuid",
+    username: "testNumberTwo",
     email: "numtwo@test.com",
   };
 
-  const userArray = [oneUser, twoUser];
-  const savedUserArray = [savedUser1, savedUser2];
+  const applicationArray = [oneApplication, twoApplication];
+  const savedApplicationArray = [savedApplication1, savedApplication2];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UsersService,
+        ApplicationsService,
         {
           provide: PrismaService,
           useValue: {
-            users: {
-              findMany: vi.fn().mockResolvedValue(savedUserArray),
-              findUnique: vi.fn().mockResolvedValue(savedUser1),
-              create: vi.fn().mockResolvedValue(savedUser1),
-              update: vi.fn().mockResolvedValue(updatedUser),
+            applications: {
+              findMany: vi.fn().mockResolvedValue(savedApplicationArray),
+              findUnique: vi.fn().mockResolvedValue(savedApplication1),
+              create: vi.fn().mockResolvedValue(oneApplication),
+              update: vi.fn().mockResolvedValue(updatedApplication),
               delete: vi.fn().mockResolvedValue(true),
               count: vi.fn(),
             },
@@ -63,7 +64,7 @@ describe("UserService", () => {
       ],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<ApplicationsService>(ApplicationsService);
     prisma = module.get<PrismaService>(PrismaService);
   });
 
@@ -73,41 +74,45 @@ describe("UserService", () => {
 
   describe("createOne", () => {
     it("should successfully add a user", async () => {
-      await expect(service.create(oneUser)).resolves.toEqual(oneUser);
-      expect(prisma.users.create).toBeCalledTimes(1);
+      await expect(service.create(oneApplication)).resolves.toEqual(
+        oneApplication
+      );
+      expect(prisma.applications.create).toBeCalledTimes(1);
     });
   });
 
   describe("findAll", () => {
-    it("should return an array of users", async () => {
-      const users = await service.findAll();
-      expect(users).toEqual(userArray);
+    it("should return an array of applications", async () => {
+      const applications = await service.findAll();
+      expect(applications).toEqual(savedApplicationArray);
     });
   });
 
   describe("findOne", () => {
-    it("should get a single user", async () => {
-      await expect(service.findOne(1)).resolves.toEqual(oneUser);
+    it("should get a single application", async () => {
+      await expect(service.findOne("savedApplication1Cuid")).resolves.toEqual(
+        savedApplication1
+      );
     });
   });
 
   describe("update", () => {
     it("should call the update method", async () => {
-      const user = await service.update(1, updateUser);
-      expect(user).toEqual(updateUser);
-      expect(prisma.users.update).toBeCalledTimes(1);
+      const user = await service.update("updateUserCuid", updateApplication);
+      expect(user).toEqual(updateApplication);
+      expect(prisma.applications.update).toBeCalledTimes(1);
     });
   });
 
   describe("remove", () => {
     it("should return {deleted: true}", async () => {
-      await expect(service.remove(2)).resolves.toEqual({ deleted: true });
+      await expect(service.remove("2")).resolves.toEqual({ deleted: true });
     });
     it("should return {deleted: false, message: err.message}", async () => {
       const repoSpy = vi
-        .spyOn(prisma.users, "delete")
+        .spyOn(prisma.applications, "delete")
         .mockRejectedValueOnce(new Error("Bad Delete Method."));
-      await expect(service.remove(-1)).resolves.toEqual({
+      await expect(service.remove("invalidCuid")).resolves.toEqual({
         deleted: false,
         message: "Bad Delete Method.",
       });
@@ -115,20 +120,25 @@ describe("UserService", () => {
     });
   });
 
-  describe("searchUsers", () => {
-    it("should return a list of users with pagination and filtering", async () => {
+  describe("searchApplications", () => {
+    it("should return a list of applications with pagination and filtering", async () => {
       const page = 1;
       const limit = 10;
       const sortObject: Prisma.SortOrder = "asc";
       const sort: any = `[{ "name": "${sortObject}" }]`;
       const filter: any = '[{ "name": { "equals": "Peter" } }]';
 
-      vi.spyOn(prisma.users, "findMany").mockResolvedValue([]);
-      vi.spyOn(prisma.users, "count").mockResolvedValue(0);
-      const result = await service.searchUsers(page, limit, sort, filter);
+      vi.spyOn(prisma.applications, "findMany").mockResolvedValue([]);
+      vi.spyOn(prisma.applications, "count").mockResolvedValue(0);
+      const result = await service.searchApplications(
+        page,
+        limit,
+        sort,
+        filter
+      );
 
       expect(result).toEqual({
-        users: [],
+        applications: [],
         page,
         limit,
         total: 0,
@@ -136,36 +146,41 @@ describe("UserService", () => {
       });
     });
 
-    it("given no page should return a list of users with pagination and filtering with default page 1", async () => {
+    it("given no page should return a list of applications with pagination and filtering with default page 1", async () => {
       const limit = 10;
       const sortObject: Prisma.SortOrder = "asc";
       const sort: any = `[{ "name": "${sortObject}" }]`;
       const filter: any = '[{ "name": { "equals": "Peter" } }]';
 
-      vi.spyOn(prisma.users, "findMany").mockResolvedValue([]);
-      vi.spyOn(prisma.users, "count").mockResolvedValue(0);
-      const result = await service.searchUsers(null, limit, sort, filter);
+      vi.spyOn(prisma.applications, "findMany").mockResolvedValue([]);
+      vi.spyOn(prisma.applications, "count").mockResolvedValue(0);
+      const result = await service.searchApplications(
+        null,
+        limit,
+        sort,
+        filter
+      );
 
       expect(result).toEqual({
-        users: [],
+        applications: [],
         page: 1,
         limit,
         total: 0,
         totalPages: 0,
       });
     });
-    it("given no limit should return a list of users with pagination and filtering with default limit 10", async () => {
+    it("given no limit should return a list of applications with pagination and filtering with default limit 10", async () => {
       const page = 1;
       const sortObject: Prisma.SortOrder = "asc";
       const sort: any = `[{ "name": "${sortObject}" }]`;
       const filter: any = '[{ "name": { "equals": "Peter" } }]';
 
-      vi.spyOn(prisma.users, "findMany").mockResolvedValue([]);
-      vi.spyOn(prisma.users, "count").mockResolvedValue(0);
-      const result = await service.searchUsers(page, null, sort, filter);
+      vi.spyOn(prisma.applications, "findMany").mockResolvedValue([]);
+      vi.spyOn(prisma.applications, "count").mockResolvedValue(0);
+      const result = await service.searchApplications(page, null, sort, filter);
 
       expect(result).toEqual({
-        users: [],
+        applications: [],
         page: 1,
         limit: 10,
         total: 0,
@@ -173,19 +188,24 @@ describe("UserService", () => {
       });
     });
 
-    it("given  limit greater than 200 should return a list of users with pagination and filtering with default limit 10", async () => {
+    it("given  limit greater than 200 should return a list of applications with pagination and filtering with default limit 10", async () => {
       const page = 1;
       const limit = 201;
       const sortObject: Prisma.SortOrder = "asc";
       const sort: any = `[{ "name": "${sortObject}" }]`;
       const filter: any = '[{ "name": { "equals": "Peter" } }]';
 
-      vi.spyOn(prisma.users, "findMany").mockResolvedValue([]);
-      vi.spyOn(prisma.users, "count").mockResolvedValue(0);
-      const result = await service.searchUsers(page, limit, sort, filter);
+      vi.spyOn(prisma.applications, "findMany").mockResolvedValue([]);
+      vi.spyOn(prisma.applications, "count").mockResolvedValue(0);
+      const result = await service.searchApplications(
+        page,
+        limit,
+        sort,
+        filter
+      );
 
       expect(result).toEqual({
-        users: [],
+        applications: [],
         page: 1,
         limit: 10,
         total: 0,
@@ -199,7 +219,7 @@ describe("UserService", () => {
       const sort: any = `[{ "name" "${sortObject}" }]`;
       const filter: any = '[{ "name": { "equals": "Peter" } }]';
       try {
-        await service.searchUsers(page, limit, sort, filter);
+        await service.searchApplications(page, limit, sort, filter);
       } catch (e) {
         expect(e).toEqual(new Error("Invalid query parameters"));
       }
@@ -234,7 +254,7 @@ describe("UserService", () => {
       };
 
       expect(service.convertFiltersToPrismaFormat(inputFilter)).toStrictEqual(
-        expectedOutput,
+        expectedOutput
       );
     });
   });
