@@ -68,7 +68,7 @@ crunchy:
       incrementalBackupSchedule: 0 0-7,9-23 * * * # every hour incremental
       volume:
         accessModes: "ReadWriteOnce"
-        storage: 100Mi
+        storage: 200Mi
         storageClassName: netapp-file-backup
 
     config:
